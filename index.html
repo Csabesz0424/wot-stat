@@ -7,7 +7,30 @@
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}input,select{background:#11151a;color:white;border:1px solid var(--line);border-radius:9px;padding:10px 12px}input{min-width:260px}
 .tablebox{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th,td{padding:12px 14px;border-bottom:1px solid var(--line)}th{text-align:left;color:#aab3bd;background:#171b20;font-size:12px;text-transform:uppercase;position:sticky;top:0}td.num{text-align:right}tr:hover td{background:#171b20}
 @media(max-width:700px){.cards{grid-template-columns:1fr}}
-</style></head><body><div class="wrap"><div class="tag">WORLD OF TANKS • EU</div><h1>Csabesz0424_</h1><div class="sub">Tier X személyes tankstatisztikák</div>
+</style></head><body>
+<style>
+.player-search{max-width:1200px;margin:18px auto 0;padding:0 20px}
+.player-search-box{display:flex;gap:10px;flex-wrap:wrap;background:#13171c;border:1px solid #292f37;border-radius:14px;padding:16px}
+.player-search-box input{flex:1;min-width:230px;background:#0e1216;color:#edf1f5;border:1px solid #303741;border-radius:9px;padding:11px 13px}
+.player-search-box button{background:#e8b84b;color:#111;border:0;border-radius:9px;padding:11px 18px;font-weight:800;cursor:pointer}
+.player-search-note{color:#8f9aa6;font:13px Segoe UI,Arial,sans-serif;margin-top:8px}
+</style>
+<div class="player-search">
+ <div class="player-search-box">
+  <input id="playerSearch" placeholder="EU játékos neve, pl. Csabesz0424_">
+  <button onclick="playerSearchDemo()">Játékos keresése</button>
+ </div>
+ <div class="player-search-note" id="playerSearchNote">A kereső felülete kész. Az élő játékosadatokhoz később a Wargaming API-t kötjük hozzá.</div>
+</div>
+<script>
+function playerSearchDemo(){
+ const v=document.getElementById('playerSearch').value.trim();
+ document.getElementById('playerSearchNote').textContent =
+   v ? 'A kereső készen áll erre a játékosra: '+v+'. Az élő lekérés az API bekötése után fog működni.'
+     : 'Írj be egy EU játékosnevet.';
+}
+</script>
+<div class="wrap"><div class="tag">WORLD OF TANKS • EU</div><h1>Csabesz0424_</h1><div class="sub">Tier X személyes tankstatisztikák</div>
 <div class="cards"><div class="card"><div class="label">Tankok a listában</div><div class="value" id="count"></div></div><div class="card"><div class="label">Legmagasabb avg dmg</div><div class="value">3 466</div></div><div class="card"><div class="label">Régió</div><div class="value">EU</div></div></div>
 <div class="toolbar"><input id="q" placeholder="Tank keresése…"><select id="nation"><option value="">Minden nemzet</option></select><select id="type"><option value="">Minden típus</option></select></div>
 <div class="tablebox"><table><thead><tr><th>Tank</th><th>Nemzet</th><th>Típus</th><th>Tier</th><th>Átlag sebzés</th><th>Gunmark</th></tr></thead><tbody id="rows"></tbody></table></div>

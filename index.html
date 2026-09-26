@@ -1,21 +1,132 @@
-<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Csabesz0424_ • WoT Stats</title><style>
-body{margin:0;background:#0b0d10;color:#edf1f5;font-family:Segoe UI,Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:32px 20px 70px}
-h1{margin:4px 0}.tag,.tier{color:#ffd34e;font-weight:800}.sub,.note{color:#8f9aa6}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
-.card,.tablebox{background:#13171c;border:1px solid #292f37;border-radius:14px}.card{padding:16px}.label{font-size:12px;color:#8f9aa6;text-transform:uppercase}.value{font-size:25px;font-weight:800;margin-top:6px}
-.toolbar{display:flex;gap:10px;margin:16px 0 12px;flex-wrap:wrap}input,select{background:#11151a;color:#fff;border:1px solid #292f37;border-radius:9px;padding:10px 12px}input{flex:1;min-width:260px}
-.tablebox{overflow:auto}table{width:100%;border-collapse:collapse;min-width:690px}th,td{padding:12px 14px;border-bottom:1px solid #292f37}th{text-align:left;color:#aab3bd;background:#171b20;font-size:12px;text-transform:uppercase;position:sticky;top:0}td.num{text-align:right}
-.mark-picker{display:flex;gap:5px;align-items:center}.stars{min-width:48px;color:#ffd34e;font-weight:800;letter-spacing:2px}.mark-btn{background:#11151a;color:#8f9aa6;border:1px solid #303741;border-radius:7px;padding:4px 7px;cursor:pointer;font-weight:700}.mark-btn.active{background:#2a2412;border-color:#e8b84b;color:#ffd34e}
-.note{font-size:12px;margin-top:12px}@media(max-width:760px){.cards{grid-template-columns:repeat(2,1fr)}}
-</style></head><body><div class="wrap"><div class="tag">WORLD OF TANKS • EU</div><h1>Csabesz0424_</h1><div class="sub">Tier VIII–X személyes tankstatisztikák</div>
-<div class="cards"><div class="card"><div class="label">Tankok</div><div class="value" id="count"></div></div><div class="card"><div class="label">Tier VIII</div><div class="value" id="c8"></div></div><div class="card"><div class="label">Tier IX</div><div class="value" id="c9"></div></div><div class="card"><div class="label">Tier X</div><div class="value" id="c10"></div></div></div>
-<div class="toolbar"><input id="q" placeholder="Tank keresése…"><select id="tier"><option value="">Tier VIII–X</option><option value="10">Tier X</option><option value="9">Tier IX</option><option value="8">Tier VIII</option></select></div>
-<div class="tablebox"><table><thead><tr><th>Tank</th><th>Tier</th><th style="text-align:right">Átlag sebzés</th><th>Gunmark</th></tr></thead><tbody id="rows"></tbody></table></div>
-<div class="note">A Gunmark 0/1/2/3 választás helyben mentődik a böngészőben.</div></div>
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Csabesz0424_ • WoT Stats</title>
+<style>
+:root{--bg:#0b0d10;--panel:#13171c;--line:#2b3139;--text:#edf1f5;--muted:#8f9aa6;--gold:#ffd34e;--accent:#e8b84b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0,#1b222a 0,#0b0d10 45%);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
+.wrap{max-width:1200px;margin:auto;padding:30px 20px 70px}
+.tag,.tier{color:var(--gold);font-weight:800}h1{margin:4px 0}.sub,.note{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.card,.tablebox{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.card{padding:16px}.label{font-size:12px;color:var(--muted);text-transform:uppercase}.value{font-size:25px;font-weight:800;margin-top:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 12px}
+input,select{background:#11151a;color:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+input{flex:1;min-width:250px}
+.tablebox{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:11px 13px;border-bottom:1px solid var(--line)}th{text-align:left;color:#aab3bd;background:#171b20;font-size:12px;text-transform:uppercase;position:sticky;top:0;z-index:2}
+td.num,th.num{text-align:right}tr:hover td{background:#171b20}
+.mark-picker{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.stars{min-width:48px;color:#ffd34e;font-weight:900;letter-spacing:2px}
+.mark-btn{background:#101419;color:#9aa5b1;border:1px solid #343b44;border-radius:7px;padding:5px 8px;cursor:pointer;font-weight:800}
+.mark-btn:hover{border-color:var(--accent);color:var(--gold)}.mark-btn.active{background:#302811;border-color:var(--accent);color:var(--gold)}
+.note{font-size:12px;margin-top:12px}
+@media(max-width:760px){.cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="tag">WORLD OF TANKS • EU</div>
+<h1>Csabesz0424_</h1>
+<div class="sub">Tier VIII–X tankstatisztikák</div>
+
+<div class="cards">
+<div class="card"><div class="label">Megjelenített tankok</div><div class="value" id="count">0</div></div>
+<div class="card"><div class="label">Tier VIII</div><div class="value" id="c8">0</div></div>
+<div class="card"><div class="label">Tier IX</div><div class="value" id="c9">0</div></div>
+<div class="card"><div class="label">Tier X</div><div class="value" id="c10">0</div></div>
+</div>
+
+<div class="toolbar">
+<input id="search" placeholder="Tank keresése…">
+<select id="tierFilter">
+<option value="">Tier VIII–X</option>
+<option value="10">Tier X</option><option value="9">Tier IX</option><option value="8">Tier VIII</option>
+</select>
+</div>
+
+<div class="tablebox">
+<table>
+<thead><tr>
+<th>Tank</th><th>Tier</th><th class="num">Csaták</th><th class="num">Átlag sebzés</th><th>MoE / Gunmark</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<div class="note">A 0/1/2/3 MoE választás ezen a böngészőn automatikusan megmarad. Ha törlöd a böngésző webhelyadatait vagy másik eszközről nyitod meg, a kézi beállítások nem kerülnek át.</div>
+</div>
+
 <script>
-const tanks=[["Panhard AML Lynx 6x6", 8, 242],["Object 257", 9, 1897],["Charioteer", 8, 1498],["Object 703 Version II", 8, 1589],["EMIL 1951", 8, 668],["Caernarvon", 8, 1576],["Wz. 64GC Bzyg", 10, 3441],["T110E4", 10, 2618],["KV-5", 8, 2103],["CS-63", 10, 1987],["Strv 103B", 10, 2170],["O-Ho", 8, 1949],["Stone Sentinel", 8, 1442],["Leox", 9, 2548],["FV230 Canopener", 10, 2855],["AMX M4 mle. 51", 9, 2200],["Strv S1", 8, 1494],["T95", 9, 2310],["WZ-120G FT", 9, 1969],["Type 4 Heavy", 9, 2010],["Rheinmetall Skorpion G", 8, 701],["E 100", 10, 2348],["Waffenträger auf Pz. IV", 9, 1992],["Ho-Ri 3", 10, 1886],["Patton the Tank", 9, 1141],["LT-432", 8, 912],["Kampfpanzer 07 RH", 8, 1022],["AMX 50 Foch B", 10, 3062],["Panther II", 8, 1309],["Tiger II", 8, 1523],["Object 252U Defender", 8, 1383],["Object 704", 9, 1473],["Type 57", 8, 964],["Saryuda", 9, 1594],["AMX 50 B", 10, 2661],["Object 777 Version II", 9, 1556],["E 65 Zwilling", 8, 2224],["SFAC 105", 8, 1954],["E 75", 9, 2335],["Ho-Ri 1", 9, 1897],["AMX 50 Foch (155)", 10, 1898],["T 55A", 9, 1564],["Pz.Kpfw. 55", 8, 2118],["Kpz. 3 GST Turm", 8, 1182],["M-III-Y", 8, 2632],["Windhund", 8, 555],["M26 Pershing", 8, 1510],["Tiger-Maus", 9, 1751],["AMX 30 B", 10, 1117],["TBT", 9, 1706],["T-22 medium", 10, 1419],["Jagdtiger", 9, 1174],["Type 71", 10, 2930],["UDES 03", 8, 1181],["XM57", 8, 2059],["M40/M43", 8, 1017],["AMX M4 mle. 54", 10, 2502],["Ferdinand", 8, 360],["WZ-113G FT", 10, 2740],["XM66F", 8, 1197],["Type 5 Heavy", 10, 3060],["Rheinmetall Panzerwagen", 10, 673],["SU-130PM", 8, 1699],["121B", 10, 1726],["Strv 103-0", 9, 2385],["Conqueror", 9, 1787],["Bat.-Châtillon Bourrasque", 8, 1416],["Object 590", 9, 1611],["Object 277", 10, 2180],["T-832", 8, 1939],["Object 140", 10, 2347],["DZT-159", 9, 2069],["Object 430U", 10, 2111],["SDP wz 66 Grom", 8, 1478],["Object 268 Version 4", 10, 2066],["Jagdpanzer E 90", 9, 1940],["T30", 9, 1877],["Maus", 10, 2280],["Caliban", 8, 1439],["CC-46 Pancernik", 9, 1983],["Type 5 Ka-Ri", 8, 1600],["HWK 30", 8, 1038],["T-103", 8, 1669],["Emil I", 8, 1920],["Centurion Mk. 7/1", 9, 1538],["FV226 Contradictious", 8, 1679],["AMX 50 120", 9, 2661],["T-10", 9, 825],["Rheinmetall Skorpion", 8, 1477],["Spähpanzer Ru 251", 9, 845],["Jagdpanzer E 100", 10, 2441],["Vz. 58 Medvěd", 9, 1459],["Vz. 60S Dravec", 10, 3253],["M60", 10, 2405],["Centurion Action X", 10, 1966],["UDES 15/16", 10, 2532],["Object 268", 10, 1688],["Stridsyxa", 8, 1782],["Indien-Panzer", 8, 1135],["Prototipo Standard B", 9, 1322],["SU-101", 8, 1080],["VK 45.02 (P) Ausf. B", 9, 1678],["Ashbringer", 10, 2234],["M48A5 Patton", 10, 3293],["FV4005 Stage II", 10, 1932],["TNH 105/1000", 8, 1219],["Pz.Kpfw. VII", 10, 2822],["GSOR the TANK", 9, 1848],["212A", 9, 1112],["Progetto M35 mod. 46", 8, 1609],["60TP Lewandowskiego", 10, 2324],["Ares 85", 9, 2244],["CS-53", 8, 1558],["AE Phase I", 9, 2512],["SDT-58 Vlkodav", 9, 1641],["Chrysler MTC 2TC", 8, 2287],["Rhm.-Borsig Waffenträger", 8, 1624],["Grille 15", 10, 2329],["BZ-166", 8, 1148],["BZT-70", 10, 3112],["Leopard 1", 10, 2194],["BZ-75", 10, 2415],["FV4004 Conway", 9, 1402],["T28 Prototype", 8, 1464],["122 TM", 8, 1841],["Char Futur 4", 9, 2076],["M53/M55", 9, 913],["P.44 Pantera", 8, 737],["T-44", 8, 916],["UDES 16", 9, 1317],["M103", 9, 2256],["ISU-122-2", 8, 1756],["ASTRON Rex 105 mm", 8, 912],["Fantôme", 9, 1775],["WZ-114", 9, 1598],["T57 Heavy", 10, 2269],["M47 Iron Arnie", 8, 1807],["TNH T Vz. 51", 9, 2157],["Sentinelle", 9, 2004],["FV215b", 10, 2785],["Carro da Combattimento 45 t", 10, 2892],["Leopard Prototyp A", 9, 1704],["VK 100.01 (P)", 8, 1373],["Object 283", 9, 2319],["FV215b (183)", 10, 1951],["Obsidian", 8, 473],["Panhard EBR 105", 10, 1981],["AMX 50 Foch", 9, 1999],["53TP Markowskiego", 8, 1041],["Object 168 German", 8, 1433],["Prototipo 6", 8, 2415],["IS-3", 8, 1311],["GSOR 1010 FB", 8, 1471],["Panhard EBR 75 (FL 10)", 8, 743],["T28", 8, 1869],["Toro", 9, 2091],["112", 8, 1614],["ShPTK-TVP 100", 8, 1385],["M54 Renegade", 8, 1836],["AMBT", 8, 1793],["Super Conqueror", 10, 1932],["Object 261", 10, 1561],["ISU-152K", 8, 1454],["CS-59", 9, 1520],["T110E3", 10, 2279],["Vercingétorix", 9, 2030],["E 50 Ausf. M", 10, 2520],["Yong Bing", 9, 2081],["AMX AC mle. 48", 8, 859],["Emil II", 9, 2235],["Coccodrillo", 10, 2352],["50TP prototyp", 8, 2288],["VK 72.01 (K)", 10, 3240],["T110E5", 10, 3170],["Projet Louis", 9, 2075],["ISU-152", 8, 944],["Vz. 55", 10, 3283],["E 50", 9, 2175],["Object 752", 9, 2250],["50TP Tyszkiewicza", 9, 1069],["TS-54", 8, 1297]],rows=document.querySelector('#rows'),q=document.querySelector('#q'),tier=document.querySelector('#tier');
-function k(n){return 'wotmark:'+n} function g(n){return Number(localStorage.getItem(k(n))||0)} function s(n,v){localStorage.setItem(k(n),v);render()}
-function p(n){let m=g(n),e=n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="mark-picker"><span class="stars">${m?'★'.repeat(m):'—'}</span>${[0,1,2,3].map(v=>`<button class="mark-btn ${m===v?'active':''}" onclick="s('${e}',${v})">${v}</button>`).join('')}</div>`}
-function render(){let f=tanks.filter(x=>x[0].toLowerCase().includes(q.value.toLowerCase())&&(!tier.value||String(x[1])===tier.value));f.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));rows.innerHTML=f.map(x=>`<tr><td><b>${x[0]}</b></td><td class="tier">${x[1]===10?'X':x[1]===9?'IX':'VIII'}</td><td class="num">${x[2].toLocaleString('hu-HU')}</td><td>${p(x[0])}</td></tr>`).join('');count.textContent=f.length;c8.textContent=tanks.filter(x=>x[1]===8).length;c9.textContent=tanks.filter(x=>x[1]===9).length;c10.textContent=tanks.filter(x=>x[1]===10).length}
-[q,tier].forEach(e=>e.addEventListener('input',render));render();
-</script></body></html>
+const tanks = [["113", 10, 1766, 6], ["121", 10, 4452, 3], ["121B", 10, 1726, 34], ["60TP Lewandowskiego", 10, 2324, 226], ["AMX 30 B", 10, 1117, 6], ["AMX 50 B", 10, 2661, 30], ["AMX 50 Foch (155)", 10, 1898, 30], ["AMX 50 Foch B", 10, 3062, 7], ["AMX M4 mle. 54", 10, 2502, 96], ["Ares 90", 10, 1927, 16], ["Ashbringer", 10, 2234, 7], ["BZ-75", 10, 2415, 29], ["BZT-70", 10, 3112, 87], ["Carro da Combattimento 45 t", 10, 2892, 6], ["Centurion Action X", 10, 1966, 36], ["Coccodrillo", 10, 2352, 21], ["CS-63", 10, 1987, 46], ["E 100", 10, 2348, 82], ["E 50 Ausf. M", 10, 2520, 94], ["FV215b", 10, 2785, 75], ["FV215b (183)", 10, 1951, 133], ["FV230 Canopener", 10, 2855, 87], ["FV4005 Stage II", 10, 1932, 144], ["Grille 15", 10, 2329, 127], ["Ho-Ri 3", 10, 1886, 25], ["IS-7", 10, 2970, 187], ["Jagdpanzer E 100", 10, 2441, 226], ["K-91", 10, 3244, 31], ["Kranvagn", 10, 2202, 55], ["Leopard 1", 10, 2194, 128], ["M48A5 Patton", 10, 3293, 3], ["M60", 10, 2405, 15], ["Maus", 10, 2280, 40], ["Object 140", 10, 2347, 57], ["Object 261", 10, 1561, 20], ["Object 268", 10, 1688, 183], ["Object 268 Version 4", 10, 2066, 15], ["Object 277", 10, 2180, 391], ["Object 430U", 10, 2111, 57], ["Panhard EBR 105", 10, 1981, 43], ["Progetto M40 mod. 65", 10, 1912, 99], ["Pz.Kpfw. VII", 10, 2822, 12], ["Rheinmetall Panzerwagen", 10, 673, 31], ["Strv 103B", 10, 2170, 63], ["Super Conqueror", 10, 1932, 32], ["T-22 medium", 10, 1419, 11], ["T-62A", 10, 2431, 11], ["T110E3", 10, 2279, 35], ["T110E4", 10, 2618, 70], ["T110E5", 10, 3170, 103], ["T57 Heavy", 10, 2269, 25], ["T92 HMC", 10, 1288, 111], ["Type 5 Heavy", 10, 3060, 90], ["Type 71", 10, 2930, 15], ["UDES 15/16", 10, 2532, 20], ["VK 72.01 (K)", 10, 3240, 124], ["Vz. 55", 10, 3283, 305], ["Vz. 60S Dravec", 10, 3253, 88], ["WZ-113G FT", 10, 2740, 40], ["Wz. 64GC Bzyg", 10, 3441, 42], ["212A", 9, 1112, 6], ["50TP Tyszkiewicza", 9, 1069, 8], ["AE Phase I", 9, 2512, 11], ["AMX 50 120", 9, 2661, 3], ["AMX 50 Foch", 9, 1999, 36], ["AMX M4 mle. 51", 9, 2200, 52], ["Ares 85", 9, 2244, 18], ["CC-46 Pancernik", 9, 1983, 17], ["Centurion Mk. 7/1", 9, 1538, 25], ["Char Futur 4", 9, 2076, 6], ["Conqueror", 9, 1787, 30], ["CS-59", 9, 1520, 12], ["DZT-159", 9, 2069, 51], ["E 50", 9, 2175, 46], ["E 75", 9, 2335, 94], ["Emil II", 9, 2235, 70], ["Fantôme", 9, 1775, 2], ["FV4004 Conway", 9, 1402, 19], ["GSOR the TANK", 9, 1848, 18], ["Ho-Ri 1", 9, 1897, 13], ["Jagdpanzer E 90", 9, 1940, 17], ["Jagdtiger", 9, 1174, 37], ["Kampfpanzer 50 t", 9, 2420, 22], ["Kpz. Erich Konzept I", 9, 2522, 7], ["Kunze Panzer", 9, 1593, 11], ["Leopard Prototyp A", 9, 1704, 114], ["Leox", 9, 2548, 10], ["M103", 9, 2256, 9], ["M46 Patton", 9, 2147, 13], ["M53/M55", 9, 913, 100], ["Object 257", 9, 1897, 69], ["Object 263", 9, 1825, 91], ["Object 283", 9, 2319, 3], ["Object 590", 9, 1611, 3], ["Object 704", 9, 1473, 270], ["Object 752", 9, 2250, 15], ["Object 777 Version II", 9, 1556, 77], ["Patton the Tank", 9, 1141, 5], ["Projet Louis", 9, 2075, 2], ["Prototipo Standard B", 9, 1322, 39], ["Saryuda", 9, 1594, 7], ["SDT-58 Vlkodav", 9, 1641, 6], ["Sentinelle", 9, 2004, 12], ["Spähpanzer Ru 251", 9, 845, 10], ["Strv 103-0", 9, 2385, 68], ["T 55A", 9, 1564, 1], ["T-10", 9, 825, 14], ["T-54", 9, 813, 54], ["T30", 9, 1877, 32], ["T95", 9, 2310, 60], ["TBT", 9, 1706, 5], ["Tiger-Maus", 9, 1751, 25], ["TNH T Vz. 51", 9, 2157, 84], ["Toro", 9, 2091, 10], ["TT-130M", 9, 2072, 3], ["Type 4 Heavy", 9, 2010, 20], ["UDES 16", 9, 1317, 7], ["Vercingétorix", 9, 2030, 5], ["VK 45.02 (P) Ausf. B", 9, 1678, 5], ["Vz. 58 Medvěd", 9, 1459, 6], ["Waffenträger auf Pz. IV", 9, 1992, 6], ["WZ-114", 9, 1598, 49], ["WZ-120G FT", 9, 1969, 10], ["Yong Bing", 9, 2081, 9], ["112", 8, 1614, 1], ["122 TM", 8, 1841, 6], ["50TP prototyp", 8, 2288, 4], ["53TP Markowskiego", 8, 1041, 78], ["AMBT", 8, 1793, 32], ["AMX AC mle. 48", 8, 859, 6], ["ASTRON Rex 105 mm", 8, 912, 3], ["Bat.-Châtillon Bourrasque", 8, 1416, 64], ["BZ-166", 8, 1148, 8], ["Caernarvon", 8, 1576, 27], ["Caliban", 8, 1439, 22], ["Charioteer", 8, 1498, 11], ["Chrysler MTC 2TC", 8, 2287, 3], ["CS-53", 8, 1558, 35], ["E 65 Zwilling", 8, 2224, 34], ["EMIL 1951", 8, 668, 1], ["Emil I", 8, 1920, 68], ["Ferdinand", 8, 360, 11], ["FV226 Contradictious", 8, 1679, 41], ["GSOR 1010 FB", 8, 1471, 25], ["Ho-Ri 2", 8, 1737, 10], ["HWK 30", 8, 1038, 5], ["Indien-Panzer", 8, 1135, 58], ["IS-3", 8, 1311, 79], ["IS-3A Peregrine", 8, 1724, 106], ["ISU-122-2", 8, 1756, 18], ["ISU-152", 8, 944, 174], ["ISU-152K", 8, 1454, 154], ["Jagdtiger Prototype", 8, 1106, 3], ["Kampfpanzer 07 RH", 8, 1022, 6], ["Kpz. 3 GST Turm", 8, 1182, 10], ["KV-5", 8, 2103, 18], ["Lorraine 120 Alby", 8, 2010, 3], ["LT-432", 8, 912, 273], ["M-III-Y", 8, 2632, 9], ["M26 Pershing", 8, 1510, 3], ["M40/M43", 8, 1017, 159], ["M47 Iron Arnie", 8, 1807, 126], ["M54 Renegade", 8, 1836, 70], ["O-Ho", 8, 1949, 7], ["Object 168 German", 8, 1433, 9], ["Object 252U Defender", 8, 1383, 705], ["Object 703 Version II", 8, 1589, 45], ["Obsidian", 8, 473, 3], ["P.44 Pantera", 8, 737, 26], ["Panhard AML Lynx 6x6", 8, 242, 3], ["Panhard EBR 75 (FL 10)", 8, 743, 582], ["Panther II", 8, 1309, 61], ["Progetto M35 mod. 46", 8, 1609, 39], ["Prototipo 6", 8, 2415, 4], ["Pz.Kpfw. 55", 8, 2118, 14], ["Rheinmetall Skorpion", 8, 1477, 93], ["Rheinmetall Skorpion G", 8, 701, 6], ["Rhm.-Borsig Waffenträger", 8, 1624, 21], ["SDP wz 66 Grom", 8, 1478, 17], ["SFAC 105", 8, 1954, 118], ["ShPTK-TVP 100", 8, 1385, 103], ["STG", 8, 1197, 40], ["Stone Sentinel", 8, 1442, 1], ["Stridsyxa", 8, 1782, 18], ["Strv S1", 8, 1494, 295], ["SU-101", 8, 1080, 88], ["SU-130PM", 8, 1699, 104], ["T-103", 8, 1669, 27], ["T-44", 8, 916, 87], ["T-44-100", 8, 2492, 5], ["T-832", 8, 1939, 96], ["T28", 8, 1869, 37], ["T28 Prototype", 8, 1464, 32], ["Tiger II", 8, 1523, 44], ["TNH 105/1000", 8, 1219, 36], ["TS-54", 8, 1297, 12], ["Type 5 Ka-Ri", 8, 1600, 30], ["Type 57", 8, 964, 3], ["UDES 03", 8, 1181, 46], ["UDES 14 Alt 5", 8, 1156, 9], ["VK 100.01 (P)", 8, 1373, 41], ["Vz. 68 Squall", 8, 952, 50], ["Windhund", 8, 555, 3], ["XM57", 8, 2059, 110], ["XM66F", 8, 1197, 6]];
+const rowsEl = document.getElementById('rows');
+const searchEl = document.getElementById('search');
+const tierEl = document.getElementById('tierFilter');
+
+function storageKey(name) { return 'csabesz-wot-moe-v2:' + name; }
+function getMark(name) { return Number(localStorage.getItem(storageKey(name)) || 0); }
+function setMark(name, value) {
+  localStorage.setItem(storageKey(name), String(value));
+  render();
+}
+
+function markPicker(name) {
+  const current = getMark(name);
+  const wrap = document.createElement('div');
+  wrap.className = 'mark-picker';
+
+  const stars = document.createElement('span');
+  stars.className = 'stars';
+  stars.textContent = current ? '★'.repeat(current) : '—';
+  wrap.appendChild(stars);
+
+  [0,1,2,3].forEach(value => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mark-btn' + (current === value ? ' active' : '');
+    btn.textContent = value;
+    btn.dataset.name = name;
+    btn.dataset.value = value;
+    wrap.appendChild(btn);
+  });
+  return wrap;
+}
+
+function roman(t) { return t===10?'X':t===9?'IX':'VIII'; }
+
+function render() {
+  const q = searchEl.value.trim().toLowerCase();
+  const tf = tierEl.value;
+  const filtered = tanks.filter(t =>
+    t[0].toLowerCase().includes(q) && (!tf || String(t[1]) === tf)
+  );
+
+  rowsEl.innerHTML = '';
+  filtered.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><b>${t[0]}</b></td><td class="tier">${roman(t[1])}</td><td class="num">${t[3].toLocaleString('hu-HU')}</td><td class="num">${t[2].toLocaleString('hu-HU')}</td>`;
+    const td = document.createElement('td');
+    td.appendChild(markPicker(t[0]));
+    tr.appendChild(td);
+    rowsEl.appendChild(tr);
+  });
+
+  document.getElementById('count').textContent = filtered.length;
+  document.getElementById('c8').textContent = tanks.filter(t=>t[1]===8).length;
+  document.getElementById('c9').textContent = tanks.filter(t=>t[1]===9).length;
+  document.getElementById('c10').textContent = tanks.filter(t=>t[1]===10).length;
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.mark-btn');
+  if (!btn) return;
+  setMark(btn.dataset.name, Number(btn.dataset.value));
+});
+searchEl.addEventListener('input', render);
+tierEl.addEventListener('change', render);
+render();
+</script>
+</body>
+</html>
